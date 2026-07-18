@@ -1,44 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🛸 GHOST TRACK · SIMULASI</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🛸 GHOST TRACK · Galaxy UI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
+    /* --- RESET --- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* --- GALAXY BACKGROUND --- */
     body {
-      background: #0a0f0a; min-height: 100vh; display: flex; justify-content: center; align-items: center;
-      font-family: 'Segoe UI', 'Courier New', monospace; padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Courier New', monospace;
+      padding: 20px;
+      background: #05080a;
+      overflow: hidden;
+      position: relative;
     }
+
+    /* Nebula layers */
+    #galaxy-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(40, 0, 80, 0.4) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 60, 40, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(80, 0, 60, 0.2) 0%, transparent 40%),
+        radial-gradient(ellipse at 10% 90%, rgba(0, 80, 100, 0.15) 0%, transparent 30%),
+        radial-gradient(ellipse at 90% 70%, rgba(100, 0, 80, 0.2) 0%, transparent 40%),
+        #05080a;
+      pointer-events: none;
+    }
+
+    /* Stars container */
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle var(--duration) ease-in-out infinite alternate;
+      box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Shooting star */
+    #shooting-star {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 6px 2px rgba(255,255,255,0.6);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      animation: shoot 8s infinite linear;
+    }
+    #shooting-star::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(to left, rgba(255,255,255,0.8), transparent);
+      transform: rotate(0deg);
+      transform-origin: right center;
+    }
+    @keyframes shoot {
+      0% { transform: translate(0, 0) rotate(-30deg); opacity: 0; }
+      5% { opacity: 1; }
+      15% { transform: translate(-400px, 200px) rotate(-30deg); opacity: 1; }
+      20% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    /* --- GLASS PANEL (di atas galaxy) --- */
     .glass-panel {
-      width: 100%; max-width: 1100px; background: rgba(10, 18, 10, 0.85); backdrop-filter: blur(8px);
-      border: 1px solid rgba(0, 255, 100, 0.25); border-radius: 40px; padding: 30px 35px 40px;
-      box-shadow: 0 25px 60px rgba(0, 255, 100, 0.08), 0 0 0 1px rgba(0, 255, 100, 0.05) inset;
-      position: relative; overflow: hidden;
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1100px;
+      background: rgba(10, 18, 10, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 255, 100, 0.2);
+      border-radius: 40px;
+      padding: 30px 35px 40px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 255, 100, 0.05) inset;
+      overflow: hidden;
+      transition: all 0.2s;
     }
+
+    /* scan-line */
     .glass-panel::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,100,0.015) 2px, rgba(0,255,100,0.015) 4px);
-      pointer-events: none; z-index: 5;
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg,
+          transparent, transparent 2px,
+          rgba(0, 255, 100, 0.02) 2px,
+          rgba(0, 255, 100, 0.02) 4px);
+      pointer-events: none;
+      z-index: 5;
     }
+
     .scanner-line {
-      position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #00ff88, transparent);
-      top: 0; left: 0; opacity: 0.15; animation: scanMove 4s infinite linear; z-index: 2; pointer-events: none;
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff88, transparent);
+      top: 0;
+      left: 0;
+      opacity: 0.12;
+      animation: scanMove 4s infinite linear;
+      z-index: 2;
+      pointer-events: none;
     }
     @keyframes scanMove { 0% { top: 0%; opacity: 0.05; } 50% { opacity: 0.2; } 100% { top: 100%; opacity: 0.05; } }
-    
+
+    /* --- header, dll (sama seperti sebelumnya) --- */
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; position: relative; z-index: 10; }
     .logo-area { display: flex; align-items: center; gap: 14px; }
     .logo-icon { font-size: 2.2rem; color: #00ff88; filter: drop-shadow(0 0 12px #00ff8866); animation: iconPulse 2s infinite ease-in-out; }
     @keyframes iconPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
     .logo-text { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #00ff88, #00cc66); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .logo-text small { font-weight: 300; font-size: 0.7rem; -webkit-text-fill-color: rgba(0, 255, 136, 0.5); margin-left: 8px; }
-    .status-badge { background: rgba(0, 255, 100, 0.08); border: 1px solid rgba(0, 255, 100, 0.25); border-radius: 60px; padding: 8px 20px; font-size: 0.8rem; color: #88ffbb; display: flex; align-items: center; gap: 10px; }
+    .status-badge { background: rgba(0, 255, 100, 0.08); border: 1px solid rgba(0, 255, 100, 0.25); border-radius: 60px; padding: 8px 20px; font-size: 0.8rem; color: #88ffbb; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(4px); }
     .status-dot { display: inline-block; width: 10px; height: 10px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 20px #00ff88; animation: dotBlink 1.2s infinite; }
     @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .target-input-area { background: rgba(0,20,0,0.4); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(0,255,100,0.1); margin-bottom: 20px; backdrop-filter: blur(2px); z-index: 10; position: relative; }
+    .target-input-area { background: rgba(0,20,0,0.5); border-radius: 60px; padding: 6px 6px 6px 20px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(0,255,100,0.1); margin-bottom: 20px; backdrop-filter: blur(2px); position: relative; z-index: 10; }
     .target-input-area i { color: #00ff88; }
     .target-input-area input { background: transparent; border: none; color: #bbffdd; font-family: 'Courier New', monospace; font-size: 0.9rem; padding: 10px 0; flex: 1; outline: none; letter-spacing: 1px; }
     .target-input-area input::placeholder { color: #446655; }
@@ -90,25 +197,41 @@
     .toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast-msg i { margin-right: 12px; color: #00ff88; }
 
-    .footer { margin-top: 28px; display: flex; justify-content: space-between; align-items: center; font-size: 0.6rem; color: #335544; border-top: 1px solid rgba(0,255,100,0.04); padding-top: 16px; z-index: 10; position: relative; flex-wrap: wrap; gap: 8px; }
+    .footer { margin-top: 28px; display: flex; justify-content: space-between; align-items: center; font-size: 0.6rem; color: #335544; border-top: 1px solid rgba(0,255,100,0.04); padding-top: 16px; position: relative; z-index: 10; flex-wrap: wrap; gap: 8px; }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .glass-panel { padding: 16px; }
+      .remote-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .remote-btn { padding: 14px 4px; font-size: 0.7rem; }
+      .remote-btn i { font-size: 1.3rem; }
+      .logo-text { font-size: 1.1rem; }
+      .status-badge { font-size: 0.65rem; padding: 4px 14px; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- GALAXY BACKGROUND -->
+  <div id="galaxy-bg"></div>
+  <div id="stars"></div>
+  <div id="shooting-star"></div>
+
+  <!-- TOAST -->
   <div class="toast-msg" id="toast"><i class="fas fa-satellite-dish"></i> <span id="toastText">Siap</span></div>
 
+  <!-- MAIN PANEL -->
   <div class="glass-panel">
     <div class="scanner-line"></div>
 
     <header class="header">
       <div class="logo-area">
         <div class="logo-icon"><i class="fas fa-ghost"></i></div>
-        <div class="logo-text">GHOST<span style="font-weight:300;">TRACK</span> <small>SIMULASI</small></div>
+        <div class="logo-text">GHOST<span style="font-weight:300;">TRACK</span> <small>GALAXY</small></div>
       </div>
       <div class="status-badge"><span class="status-dot"></span> LIVE · SIMULASI <i class="fas fa-shield-alt" style="color:#00ff88;margin-left:4px;"></i></div>
     </header>
 
-    <!-- TARGET PHONE NUMBER INPUT -->
     <div class="target-input-area">
       <i class="fas fa-phone-alt"></i>
       <input type="text" id="targetPhone" placeholder="Masukkan nomor target (contoh: +62 812-3456-7890)" value="+62 812-3456-7890">
@@ -116,14 +239,14 @@
     </div>
 
     <div class="dashboard-grid">
-      <!-- MAP -->
       <div class="map-panel">
         <div class="map-header"><span><i class="fas fa-map-pin"></i> Real-time tracking</span> <span><i class="fas fa-sync-alt"></i> <span id="updateTime">0.8</span>s</span></div>
         <div class="map-container" id="mapContainer">
-          <div class="grid-line h"></div><div class="grid-line h2"></div><div class="grid-line v"></div><div class="grid-line v2"></div>
+          <div class="grid-line h"></div><div class="grid-line h2"></div>
+          <div class="grid-line v"></div><div class="grid-line v2"></div>
           <div class="pulse-ring r1"></div><div class="pulse-ring r2"></div><div class="pulse-ring r3"></div>
           <div class="track-dot" id="trackDot"></div>
-          <div class="coord-label" id="coordLabel"><i class="fas fa-crosshairs" style="margin-right:6px;"></i> <span id="latDisplay">-6.2088</span>°S · <span id="lngDisplay">106.8456</span>°E</div>
+          <div class="coord-label"><i class="fas fa-crosshairs" style="margin-right:6px;"></i> <span id="latDisplay">-6.2088</span>°S · <span id="lngDisplay">106.8456</span>°E</div>
         </div>
         <div class="info-row">
           <div class="info-chip"><i class="fas fa-wifi"></i> Sinyal: <span class="value" id="signalLevel">92</span>%</div>
@@ -132,7 +255,6 @@
         </div>
       </div>
 
-      <!-- REMOTE -->
       <div class="remote-panel">
         <div class="remote-title"><i class="fas fa-gamepad"></i> Remote Commands <span style="margin-left:auto;font-size:0.6rem;color:#446655;">terenkripsi</span></div>
         <div class="remote-grid">
@@ -158,6 +280,24 @@
 
   <script>
     (function() {
+      // --- GENERATE STARS ---
+      const starsContainer = document.getElementById('stars');
+      const starCount = 400;
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5 + 0.5;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+        star.style.animationDelay = Math.random() * 5 + 's';
+        star.style.opacity = Math.random() * 0.5 + 0.3;
+        starsContainer.appendChild(star);
+      }
+
+      // --- DOM refs (sama seperti sebelumnya) ---
       const dot = document.getElementById('trackDot');
       const latDisplay = document.getElementById('latDisplay');
       const lngDisplay = document.getElementById('lngDisplay');
@@ -264,7 +404,6 @@
         const [msg, icon] = msgs[action] || ['Perintah dikirim', 'fa-bolt'];
         showToast(msg, icon);
 
-        // efek visual tambahan
         if (action === 'vibrate') {
           dot.style.transform = 'translate(-50%, -50%) scale(1.3)';
           setTimeout(() => dot.style.transform = 'translate(-50%, -50%) scale(1)', 300);
@@ -292,12 +431,10 @@
         });
       });
 
-      // Random device ID
       function randomHex(len) { return Array.from({ length: len }, () => '0123456789ABCDEF'[Math.floor(Math.random() * 16)]).join(''); }
       deviceIdEl.textContent = randomHex(2) + '-' + randomHex(3) + randomHex(2);
       document.getElementById('sessionId').textContent = '0x' + randomHex(4) + '_' + randomHex(4);
 
-      // Loop
       function loop() {
         moveDot();
         if (Math.random() < 0.02) {
@@ -310,10 +447,8 @@
 
       setTimeout(() => showToast('🛸 Sistem simulasi siap · Masukkan nomor target', 'fa-shield-alt'), 800);
 
-      // Click dot = locate
       dot.addEventListener('click', () => handleAction('locate'));
 
-      // Double click map = jump
       mapContainer.addEventListener('dblclick', (e) => {
         const rect = mapContainer.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -323,14 +458,13 @@
         showToast(`📍 Loncat ke koordinat (${target.x.toFixed(1)}, ${target.y.toFixed(1)})`, 'fa-map-pin');
       });
 
-      // Keyboard shortcuts
       document.addEventListener('keydown', (e) => {
         const key = e.key.toLowerCase();
         const map = { 'l': 'lock', 'g': 'locate', 'a': 'alert', 'w': 'wipe', 'c': 'camera', 'v': 'vibrate' };
         if (map[key]) { e.preventDefault(); handleAction(map[key]); }
       });
 
-      console.log('🛸 GHOST TRACK · SIMULASI');
+      console.log('🛸 GHOST TRACK · GALAXY SIMULASI');
       console.log('⌨️  shortcuts: l=lock, g=locate, a=alert, w=wipe, c=camera, v=vibrate');
     })();
   </script>
